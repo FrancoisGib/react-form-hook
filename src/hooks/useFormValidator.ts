@@ -1,5 +1,6 @@
 import { ChangeEvent, useState } from "react";
 import { ValidationFunction } from "../lib/Validators";
+import { ChangeEventFunction } from "../types";
 
 interface FormFieldParam {
    name: string;
@@ -17,9 +18,7 @@ interface FormField {
    validationFunctions?: ValidationFunction[];
 }
 
-type SetFormStateFunction = (e: ChangeEvent<HTMLInputElement>) => void;
-
-type FormState = [dict<FormField>, SetFormStateFunction, boolean];
+type FormState = [dict<FormField>, ChangeEventFunction, boolean];
 
 export const useFormValidator = (...formFields: FormFieldParam[]): FormState => {
    // convert formFields to form state dictionary with initial values and validation functions
@@ -39,7 +38,7 @@ export const useFormValidator = (...formFields: FormFieldParam[]): FormState => 
    );
 
    // function to handle form changes
-   const setFormState = (e: ChangeEvent<HTMLInputElement>) => {
+   const setFormState: ChangeEventFunction = (e: ChangeEvent<HTMLInputElement>) => {
        setForm(
            {
                ...formState, 
