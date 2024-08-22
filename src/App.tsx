@@ -1,26 +1,22 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useFormValidator } from "./hooks/useFormValidator";
+import { Validator } from "./lib/Validators";
 
-function App() {
+export default function App() {
+
+  const [form, setForm, isValid] = useFormValidator(
+    {name: "email", initialValue: "", validationFunctions: [Validator.email]},
+    {name: "name", initialValue: "", validationFunctions: [Validator.maxLength(30), Validator.minLength(5)]},
+    {name: "password", initialValue: "", validationFunctions: [Validator.nonBlank]}
+  );
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <form>
+      <input type="email" name="email" value={form["email"].value} onChange={setForm} />
+      <input type="text" name="name" value={form["name"].value} onChange={setForm} />
+      <input type="text" name="password" value={form["password"].value} onChange={setForm} />
+    </form>
+      <p>{isValid.toString()}</p>
     </div>
   );
 }
-
-export default App;
