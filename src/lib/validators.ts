@@ -12,5 +12,12 @@ export class Validator {
     static password = (value: string): boolean => 
         new RegExp(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/)
         .test(value);
-}
 
+    static isNumber = (value: string): boolean => new RegExp(/^-?([0-9]+)?$/).test(String(value));
+
+    static isLower = (number: number): ValidationFunction => (value: string): boolean => Validator.isNumber(value) && number > Number(value);
+    
+    static isGreater = (number: number): ValidationFunction => (value: string): boolean => Validator.isNumber(value) && number < Number(value);
+
+    static equals = (number: number | string): ValidationFunction => (value: string): boolean => value === String(number);
+}

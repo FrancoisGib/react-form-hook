@@ -1,5 +1,5 @@
 import { ChangeEvent, useState } from "react";
-import { ValidationFunction } from "../lib/Validators";
+import { ValidationFunction } from "../lib/validators";
 import { ChangeEventFunction } from "../types";
 
 type FieldState = [string, ChangeEventFunction, boolean];
