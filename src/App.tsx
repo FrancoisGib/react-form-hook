@@ -19,8 +19,11 @@ export default function App() {
       <input type="text" name="name" value={form["name"].value} onChange={setForm} />
       <input type="text" name="password" value={form["password"].value} onChange={setForm} />
     </form>
-      <p>{isValid.toString()}</p>
 
+      <p>Email valid : {form["email"].isValid.toString()}</p>
+      <p>Name valid : {form["name"].isValid.toString()}</p>
+      <p>Password valid : {form["password"].isValid.toString()}</p>
+      <p>Form valid : {isValid.toString()}</p>
 
       <input type="text" name="non-blank" value={nonBlankInput} onChange={setInput} />
     </div>

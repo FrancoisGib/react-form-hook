@@ -16,14 +16,29 @@ interface dict<T> {
 interface FormField {
    value: string;
    validationFunctions?: ValidationFunction[];
+   isValid: boolean;
 }
 
 type FormState = [dict<FormField>, ChangeEventFunction, boolean];
 
+// functions to check the validity of different types
+const checkValidity = (value: string, validationFunctions?: ValidationFunction[]): boolean => 
+    validationFunctions ? validationFunctions.reduce((isValid, func) => isValid && func(value), true): true;
+
+const isFieldValid = (field: FormField): boolean => checkValidity(field.value, field.validationFunctions);
+
+const isParamValid = (param: FormFieldParam): boolean => checkValidity(param.initialValue, param.validationFunctions);
+
+// useFormValidator hook
 export const useFormValidator = (...formFields: FormFieldParam[]): FormState => {
+
    // convert formFields to form state dictionary with initial values and validation functions
    const form: dict<FormField> = formFields.reduce((acc, field) => {
-       acc[field.name] = {value: field.initialValue, validationFunctions: field.validationFunctions};
+       acc[field.name] = {
+            value: field.initialValue,
+            validationFunctions: field.validationFunctions,
+            isValid: isParamValid(field)
+        };
        return acc;
    }
    , {} as dict<FormField>);
@@ -31,18 +46,18 @@ export const useFormValidator = (...formFields: FormFieldParam[]): FormState => 
    const [formState, setForm] = useState(form);
 
    // computed state for form validity
-   const isValid = Object.values(formState).every(field => 
-       field.validationFunctions ? 
-           field.validationFunctions.reduce((isValid, func) => isValid && func(field.value), true) 
-           : true
-   );
+   const isValid = Object.values(formState).every(field => isFieldValid(field));
 
-   // function to handle form changes
+   // function to handle form changes, update the state and recalculate validity for the form and the update field
    const setFormState: ChangeEventFunction = (e: ChangeEvent<HTMLInputElement>) => {
        setForm(
            {
                ...formState, 
-               [e.target.name]: {value: e.target.value, validationFunctions: formState[e.target.name].validationFunctions}
+               [e.target.name]: {
+                    value: e.target.value, 
+                    validationFunctions: formState[e.target.name].validationFunctions, 
+                    isValid: checkValidity(e.target.value, formState[e.target.name].validationFunctions)
+                }
            });
    };
 
